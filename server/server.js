@@ -1,8 +1,12 @@
 const express = require("express");
 const cors = require("cors");
 const bodyParser = require("body-parser");
+const monk = require("monk");
 
 const app = express();
+
+const db = monk("localhost/twitter-clone");
+const tweets = db.get("tweets");
 
 app.use(cors());
 app.use(bodyParser.json());
@@ -29,9 +33,21 @@ const isValidTweet = (tweet) => {
   }
 };
 
-app.post("/tweets", (req, res) => {
+app.post("/tweets", (req, res, next) => {
   if (isValidTweet(req.body)) {
     //insert in DB
+    const tweet = {
+      name: req.body.name.toString(),
+      content: req.body.content.toString(),
+      created_at: new Date(),
+    };
+    tweets
+      .insert(tweet)
+      .then((createdTweet) => {
+        console.log("Inserted Tweet:", createdTweet);
+        res.json(createdTweet);
+      })
+      .catch(next);
   } else {
     res.status(400).send("Invalid Input");
   }

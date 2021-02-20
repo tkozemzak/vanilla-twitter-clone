@@ -1,8 +1,19 @@
 const form = document.querySelector(".tweet-form");
 const loadingElement = document.querySelector(".loading");
+
 const API_URL = "http://localhost:5000/tweets";
 
 loadingElement.style.display = "none";
+
+const hideLoader = () => {
+  form.style.display = "";
+  loadingElement.style.display = "none";
+};
+
+const hideForm = () => {
+  form.style.display = "none";
+  loadingElement.style.display = "";
+};
 
 form.addEventListener("submit", (event) => {
   event.preventDefault();
@@ -25,15 +36,20 @@ form.addEventListener("submit", (event) => {
       headers: {
         "Content-Type": "application/json; charset=utf-8",
       },
-    }).then((res) => {});
-
-    form.style.display = "none";
-    loadingElement.style.display = "";
-
-    function swapDisplay() {
-      form.style.display = "";
-      loadingElement.style.display = "none";
-    }
-    setTimeout(swapDisplay, 2000);
+    })
+      .then((res) => {
+        hideForm();
+        console.log("status", res.status);
+        if (res.status == 200) {
+          setTimeout(hideLoader, 2000);
+          form.reset();
+        } else {
+          alert("An error occurred");
+          setTimeout(hideLoader, 4000);
+        }
+      })
+      .then((createdTweet) => {
+        console.log("createdTweet", createdTweet);
+      });
   }
 });
