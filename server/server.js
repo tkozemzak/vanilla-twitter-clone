@@ -6,6 +6,7 @@ const monk = require("monk");
 const app = express();
 
 const db = monk("localhost/twitter-clone");
+//get all tweets from db. create tweets collection if it does not exist
 const tweets = db.get("tweets");
 
 app.use(cors());
@@ -19,10 +20,10 @@ app.listen(port, () => {
 
 app.get("/", (req, res) => {
   res.json({
-    message: "from server",
+    message: "Nothing Here",
   });
 });
-
+//server side submission validation
 const isValidTweet = (tweet) => {
   if (tweet.name.length > 0 && tweet.name.length < 50) {
     if (tweet.content.length > 0 && tweet.content.length < 280) {
@@ -32,16 +33,15 @@ const isValidTweet = (tweet) => {
     return false;
   }
 };
-
+//retrieve all tweets from db and send to client
 app.get("/tweets", (req, res) => {
   tweets.find().then((tweets) => {
     res.json(tweets);
   });
 });
-
+//accept tweet from front end and write to db
 app.post("/tweets", (req, res, next) => {
   if (isValidTweet(req.body)) {
-    //insert in DB
     const tweet = {
       name: req.body.name.toString(),
       content: req.body.content.toString(),
@@ -50,7 +50,8 @@ app.post("/tweets", (req, res, next) => {
     tweets
       .insert(tweet)
       .then((createdTweet) => {
-        res.json(createdTweet);
+        //send new tweet back to client to append to DOM
+        return res.json(createdTweet);
       })
       .catch(next);
   } else {

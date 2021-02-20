@@ -4,14 +4,16 @@ const tweetsElement = document.querySelector(".tweets");
 const API_URL = "http://localhost:5000/tweets";
 
 loadingElement.style.display = "none";
-
+//hide loader when data is loaded
 const hideLoader = () => {
   form.style.display = "";
+  tweetsElement.style.display = "";
   loadingElement.style.display = "none";
 };
-
+//hide form and tweets while loading
 const hideForm = () => {
   form.style.display = "none";
+  tweetsElement.style.display = "none";
   loadingElement.style.display = "";
 };
 
@@ -20,7 +22,7 @@ form.addEventListener("submit", (event) => {
   const formData = new FormData(form);
   const name = formData.get("name");
   const content = formData.get("content");
-
+  //validate submitted data
   if (name.length <= 0 || content.length <= 0) {
     alert("Please enter a name or message");
   } else if (name.length > 20 || content.length > 280) {
@@ -30,6 +32,7 @@ form.addEventListener("submit", (event) => {
       name: name,
       content: content,
     });
+    //if validated, then POST new tweet
     fetch(API_URL, {
       method: "POST",
       body: tweet,
@@ -38,45 +41,67 @@ form.addEventListener("submit", (event) => {
       },
     })
       .then((res) => {
+        //hide form while sending tweet to db
         hideForm();
-        console.log("status", res.status);
         if (res.status == 200) {
+          //delay until db has completed
           setTimeout(hideLoader, 2000);
           form.reset();
+          return res.json();
         } else {
           alert("An error occurred");
           setTimeout(hideLoader, 4000);
         }
       })
-      .then((createdTweet) => {
-        console.log("createdTweet", createdTweet);
+      .then((tweet) => {
+        //add the new tweet to the list of tweets
+        addNewestTweet(tweet);
       });
   }
 });
-
+//fetch all tweets from DB
 const listAllTweets = () => {
   fetch(API_URL)
     .then((res) => {
       return res.json();
     })
     .then((tweets) => {
-      console.log("tweets:", tweets);
-      return tweets.forEach((tweet) => {
-        const div = document.createElement("div");
-        const header = document.createElement("h3");
-        header.textContent = tweet.name;
-        const content = document.createElement("p");
-        content.textContent = tweet.content;
-        const date = document.createElement("p");
-        date.textContent = tweet.created_at;
+      return (
+        tweets
+          //sort tweets by creation date - todo: add sorting feature to sort by new/old/etc
+          .sort((a, b) => new Date(b.created_at) - new Date(a.created_at))
+          //iterate through tweets and create an HTML element for each one
+          .forEach((tweet) => {
+            const div = document.createElement("div");
+            const header = document.createElement("h3");
+            header.textContent = tweet.name;
+            const content = document.createElement("p");
+            content.textContent = tweet.content;
+            const date = document.createElement("p");
+            date.textContent = tweet.created_at;
 
-        div.appendChild(header);
-        div.appendChild(content);
-        div.appendChild(date);
-        console.log(tweet.created_at);
-        tweetsElement.appendChild(div);
-      });
+            div.appendChild(header);
+            div.appendChild(content);
+            div.appendChild(date);
+            tweetsElement.appendChild(div);
+          })
+      );
     });
 };
-
+//fetch all tweets from DB upon page load
 listAllTweets();
+
+const addNewestTweet = (tweet) => {
+  const div = document.createElement("div");
+  const header = document.createElement("h3");
+  header.textContent = tweet.name;
+  const content = document.createElement("p");
+  content.textContent = tweet.content;
+  const date = document.createElement("p");
+  date.textContent = tweet.created_at;
+
+  div.appendChild(header);
+  div.appendChild(content);
+  div.appendChild(date);
+  tweetsElement.prepend(div);
+};
