@@ -9,7 +9,7 @@ const db = monk("localhost/twitter-clone");
 const tweets = db.get("tweets");
 
 app.use(cors());
-app.use(bodyParser.json());
+app.use(express.json());
 
 const port = process.env.PORT || 5000;
 
@@ -33,6 +33,12 @@ const isValidTweet = (tweet) => {
   }
 };
 
+app.get("/tweets", (req, res) => {
+  tweets.find().then((tweets) => {
+    res.json(tweets);
+  });
+});
+
 app.post("/tweets", (req, res, next) => {
   if (isValidTweet(req.body)) {
     //insert in DB
@@ -44,7 +50,6 @@ app.post("/tweets", (req, res, next) => {
     tweets
       .insert(tweet)
       .then((createdTweet) => {
-        console.log("Inserted Tweet:", createdTweet);
         res.json(createdTweet);
       })
       .catch(next);

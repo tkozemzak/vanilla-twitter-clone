@@ -1,6 +1,6 @@
 const form = document.querySelector(".tweet-form");
 const loadingElement = document.querySelector(".loading");
-
+const tweetsElement = document.querySelector(".tweets");
 const API_URL = "http://localhost:5000/tweets";
 
 loadingElement.style.display = "none";
@@ -53,3 +53,30 @@ form.addEventListener("submit", (event) => {
       });
   }
 });
+
+const listAllTweets = () => {
+  fetch(API_URL)
+    .then((res) => {
+      return res.json();
+    })
+    .then((tweets) => {
+      console.log("tweets:", tweets);
+      return tweets.forEach((tweet) => {
+        const div = document.createElement("div");
+        const header = document.createElement("h3");
+        header.textContent = tweet.name;
+        const content = document.createElement("p");
+        content.textContent = tweet.content;
+        const date = document.createElement("p");
+        date.textContent = tweet.created_at;
+
+        div.appendChild(header);
+        div.appendChild(content);
+        div.appendChild(date);
+        console.log(tweet.created_at);
+        tweetsElement.appendChild(div);
+      });
+    });
+};
+
+listAllTweets();
