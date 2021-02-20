@@ -19,13 +19,20 @@ app.get("/", (req, res) => {
   });
 });
 
-app.post("/tweets", (req, res) => {
-  console.log("req.body:", req.body);
-  if (req.body.name.length <= 0 || req.body.content.length <= 0) {
-    res.status(400).send("Invalid Input");
-  } else if (req.body.name.length > 20 || req.body.content.length > 280) {
-    res.status(400).send("You have exceeded the character limit");
+const isValidTweet = (tweet) => {
+  if (tweet.name.length > 0 && tweet.name.length < 50) {
+    if (tweet.content.length > 0 && tweet.content.length < 280) {
+      return true;
+    }
   } else {
-    res.send(req.body);
+    return false;
+  }
+};
+
+app.post("/tweets", (req, res) => {
+  if (isValidTweet(req.body)) {
+    //insert in DB
+  } else {
+    res.status(400).send("Invalid Input");
   }
 });
