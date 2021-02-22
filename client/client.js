@@ -20,16 +20,14 @@ const hideForm = () => {
 form.addEventListener("submit", (event) => {
   event.preventDefault();
   const formData = new FormData(form);
-  const name = formData.get("name");
   const content = formData.get("content");
   //validate submitted data
-  if (name.length <= 0 || content.length <= 0) {
+  if (content.length <= 0) {
     alert("Please enter a name or message");
-  } else if (name.length > 20 || content.length > 280) {
+  } else if (content.length > 280) {
     alert("You have exceeded the character limit");
   } else {
     const tweet = JSON.stringify({
-      name: name,
       content: content,
     });
     //if validated, then POST new tweet
@@ -73,14 +71,12 @@ const listAllTweets = () => {
           //iterate through tweets and create an HTML element for each one
           .forEach((tweet) => {
             const div = document.createElement("div");
-            const header = document.createElement("h3");
-            header.textContent = tweet.name;
+            div.classList.add("single-tweet");
             const content = document.createElement("p");
             content.textContent = tweet.content;
             const date = document.createElement("p");
             date.textContent = tweet.created_at;
 
-            div.appendChild(header);
             div.appendChild(content);
             div.appendChild(date);
             tweetsElement.appendChild(div);
@@ -93,14 +89,13 @@ listAllTweets();
 
 const addNewestTweet = (tweet) => {
   const div = document.createElement("div");
-  const header = document.createElement("h3");
-  header.textContent = tweet.name;
+  div.classList.add("single-tweet");
+
   const content = document.createElement("p");
   content.textContent = tweet.content;
   const date = document.createElement("p");
   date.textContent = tweet.created_at;
 
-  div.appendChild(header);
   div.appendChild(content);
   div.appendChild(date);
   tweetsElement.prepend(div);

@@ -1,3 +1,24 @@
+.main-container {
+  display: flex;
+}
+
+.sidebar-container {
+  display: flex;
+  flex-direction: column;
+  margin-left: 15vw;
+  border-color: aqua;
+  border-style: solid;
+}
+
+.center-container {
+  width: 60vw;
+}
+
+.side-icon-container {
+  display: flex;
+  justify-content: center;
+}
+
 .title {
   text-align: center;
 }
@@ -10,4 +31,17 @@
 }
 
 .loading {
+}
+
+.tweets {
+  overflow: scroll;
+  height: 100%;
+}
+
+.single-tweet {
+  border-color: aqua;
+  border-style: solid;
+}
+
+i {
 }

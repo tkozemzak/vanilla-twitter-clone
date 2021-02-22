@@ -14,21 +14,67 @@
       integrity="sha512-EZLkOqwILORob+p0BXZc+Vm3RgJBOe1Iq/0fiI7r/wJgzOFZMlsqTa29UEl6v6U6gsV4uIpsNZoV32YZqrCRCQ=="
       crossorigin="anonymous"
     />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.2/css/all.min.css"
+    />
   </head>
   <body>
     <header class="title"><h1></h1></header>
 
-    <main>
-      <form class="tweet-form">
-        <label for="name">Name</label>
-        <input class="u-full-width" type="text" id="name" name="name" />
-        <label for="content">Type Anything...</label>
-        <textarea class="u-full-width" id="content" name="content"></textarea>
-        <button class="button-primary">Send</button>
-      </form>
-      <img class="loading" src="assets/200.gif" />
-      <div class="tweets"></div>
-    </main>
+    <div class="main-container">
+      <div class="sidebar-container">
+        <div class="side-icon-container">
+          <i class="fab fa-twitter"></i>
+          <h5>Home</h3>
+        </div>
+        <div class="side-icon-container">
+          <i class="fas fa-hashtag"></i>
+          <h5>Explore</h3>
+        </div>
+        <div class="side-icon-container">
+          <i class="far fa-bell"></i>
+          <h5>Notifications</h3>
+        </div>
+        <div class="side-icon-container">
+          <i class="far fa-envelope"></i>
+          <h5>Messages</h3>
+        </div>
+        <div class="side-icon-container">
+          <i class="far fa-bookmark"></i>
+          <h5>Bookmarks</h3>
+        </div>
+        <div class="side-icon-container">
+          <i class="far fa-list-alt"></i>
+          <h5>Lists</h3>
+        </div>
+        <div class="side-icon-container">
+          <i class="far fa-address-card"></i>
+          <h5>Profile</h3>
+        </div>
+        <div class="side-icon-container">
+          <i class="fas fa-ellipsis-h"></i>
+          <h5>More</h3>
+        </div>
+        <div class="side-icon-container">
+          <i class="fas fa-feather-alt"></i>
+          <h5>Tweet</h3>
+        </div>
+      </div>
+      <div class="center-container">
+        <form class="tweet-form">
+          <textarea
+            class="u-full-width"
+            id="content"
+            name="content"
+            placeholder="What's Happening?"
+          ></textarea>
+          <button class="button-primary">Send</button>
+        </form>
+        <img class="loading" src="assets/200.gif" />
+        <div class="tweets"></div>
+      </div>
+    </div>
     <script src="client.js"></script>
   </body>
 </html>
