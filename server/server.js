@@ -8,6 +8,9 @@ const app = express();
 const db = monk("localhost/twitter-clone");
 //get all tweets from db. create tweets collection if it does not exist
 const tweets = db.get("tweets");
+//get all users from db. create users collection if it does not exist
+
+const users = db.get("users");
 
 app.use(cors());
 app.use(express.json());
@@ -18,17 +21,10 @@ app.listen(port, () => {
   console.log("listening on: ", port);
 });
 
-app.get("/", (req, res) => {
-  res.json({
-    message: "Nothing Here",
-  });
-});
 //server side submission validation
 const isValidTweet = (tweet) => {
-  if (tweet.name.length > 0 && tweet.name.length < 50) {
-    if (tweet.content.length > 0 && tweet.content.length < 280) {
-      return true;
-    }
+  if (tweet.content.length > 0 && tweet.content.length < 280) {
+    return true;
   } else {
     return false;
   }
@@ -41,9 +37,9 @@ app.get("/tweets", (req, res) => {
 });
 //accept tweet from front end and write to db
 app.post("/tweets", (req, res, next) => {
+  console.log("req.body", req.body);
   if (isValidTweet(req.body)) {
     const tweet = {
-      name: req.body.name.toString(),
       content: req.body.content.toString(),
       created_at: new Date(),
     };
@@ -57,4 +53,21 @@ app.post("/tweets", (req, res, next) => {
   } else {
     res.status(400).send("Invalid Input");
   }
+});
+//sign up process - write to User collection in DB
+app.post("/signup", (req, res, next) => {
+  const user = {
+    firstName: req.body.firstName.toString(),
+    lastName: req.body.lastName.toString(),
+    email: req.body.email.toString(),
+    password: req.body.password.toString(),
+    created_at: new Date(),
+  };
+  users
+    .insert(user)
+    .then((createdUser) => {
+      //send new user info back to client
+      return res.json(createdUser);
+    })
+    .catch(next);
 });

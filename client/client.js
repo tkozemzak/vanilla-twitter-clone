@@ -30,6 +30,8 @@ form.addEventListener("submit", (event) => {
     const tweet = JSON.stringify({
       content: content,
     });
+    console.log("tweet content", tweet);
+    addNewestTweet(tweet);
     //if validated, then POST new tweet
     fetch(API_URL, {
       method: "POST",
@@ -37,24 +39,25 @@ form.addEventListener("submit", (event) => {
       headers: {
         "Content-Type": "application/json; charset=utf-8",
       },
-    })
-      .then((res) => {
-        //hide form while sending tweet to db
-        hideForm();
-        if (res.status == 200) {
-          //delay until db has completed
-          setTimeout(hideLoader, 2000);
-          form.reset();
-          return res.json();
-        } else {
-          alert("An error occurred");
-          setTimeout(hideLoader, 4000);
-        }
-      })
-      .then((tweet) => {
-        //add the new tweet to the list of tweets
-        addNewestTweet(tweet);
-      });
+    }).then((res) => {
+      //hide form while sending tweet to db
+      hideForm();
+      console.log("res", res.body);
+      if (res.status == 200) {
+        //delay until db has completed
+        setTimeout(hideLoader, 2000);
+        form.reset();
+        return res.json();
+      } else {
+        alert("An error occurred");
+        setTimeout(hideLoader, 4000);
+      }
+    });
+    // .then((tweet) => {
+    //   console.log("tweet in THEN", tweet);
+    //   //add the new tweet to the list of tweets
+    //   addNewestTweet(tweet);
+    // });
   }
 });
 //fetch all tweets from DB
@@ -76,9 +79,13 @@ const listAllTweets = () => {
             content.textContent = tweet.content;
             const date = document.createElement("p");
             date.textContent = tweet.created_at;
+            const viewTweet = document.createElement("a");
+            viewTweet.textContent = "View Tweet";
+            viewTweet.href = "./pages/signup.html";
 
             div.appendChild(content);
             div.appendChild(date);
+            div.appendChild(viewTweet);
             tweetsElement.appendChild(div);
           })
       );
@@ -88,6 +95,7 @@ const listAllTweets = () => {
 listAllTweets();
 
 const addNewestTweet = (tweet) => {
+  console.log("tweet.content", tweet.content);
   const div = document.createElement("div");
   div.classList.add("single-tweet");
 
