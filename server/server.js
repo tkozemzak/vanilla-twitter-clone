@@ -63,13 +63,19 @@ app.post("/signup", (req, res, next) => {
     password: req.body.password.toString(),
     created_at: new Date(),
   };
-  users
-    .insert(user)
-    .then((createdUser) => {
-      //send new user info back to client
-      return res.json(createdUser);
-    })
-    .catch(next);
+
+  //check if user with this email exists
+  users.findOne({ email: user.email }).then((foundUser) => {
+    foundUser
+      ? res.send("User with this email already exists")
+      : users
+          .insert(user)
+          .then((createdUser) => {
+            //send new user info back to client
+            return res.json(createdUser);
+          })
+          .catch(next);
+  });
 });
 
 //login
@@ -84,7 +90,7 @@ app.post("/login", (req, res, next) => {
       foundUser.password == user.password
         ? //send new user info back to client
           res.json(foundUser)
-        : res.send(404);
+        : res.send(401);
     })
     .catch(next);
 });
