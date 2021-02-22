@@ -1,7 +1,14 @@
 const form = document.querySelector(".tweet-form");
 const loadingElement = document.querySelector(".loading");
 const tweetsElement = document.querySelector(".tweets");
-const API_URL = "http://localhost:5000/tweets";
+const API_URL = "http://localhost:5000";
+
+//check for current user
+const checkLogin = (user) => {
+  return user ? (form.style.display = "") : (form.style.display = "none");
+};
+
+checkLogin(currentUser);
 
 loadingElement.style.display = "none";
 //hide loader when data is loaded
@@ -23,46 +30,43 @@ form.addEventListener("submit", (event) => {
   const content = formData.get("content");
   //validate submitted data
   if (content.length <= 0) {
-    alert("Please enter a name or message");
+    alert("Please enter your tweet content");
   } else if (content.length > 280) {
     alert("You have exceeded the character limit");
   } else {
     const tweet = JSON.stringify({
       content: content,
     });
-    console.log("tweet content", tweet);
-    addNewestTweet(tweet);
     //if validated, then POST new tweet
-    fetch(API_URL, {
+    fetch(`${API_URL}/tweets`, {
       method: "POST",
       body: tweet,
       headers: {
         "Content-Type": "application/json; charset=utf-8",
       },
-    }).then((res) => {
-      //hide form while sending tweet to db
-      hideForm();
-      console.log("res", res.body);
-      if (res.status == 200) {
-        //delay until db has completed
-        setTimeout(hideLoader, 2000);
-        form.reset();
-        return res.json();
-      } else {
-        alert("An error occurred");
-        setTimeout(hideLoader, 4000);
-      }
-    });
-    // .then((tweet) => {
-    //   console.log("tweet in THEN", tweet);
-    //   //add the new tweet to the list of tweets
-    //   addNewestTweet(tweet);
-    // });
+    })
+      .then((res) => {
+        //hide form while sending tweet to db
+        hideForm();
+        if (res.status == 200) {
+          //delay until db has completed
+          setTimeout(hideLoader, 2000);
+          form.reset();
+          return res.json();
+        } else {
+          alert("An error occurred");
+          setTimeout(hideLoader, 4000);
+        }
+      })
+      .then((tweet) => {
+        //add the new tweet to the list of tweets
+        addNewestTweet(tweet);
+      });
   }
 });
 //fetch all tweets from DB
 const listAllTweets = () => {
-  fetch(API_URL)
+  fetch(`${API_URL}/tweets`)
     .then((res) => {
       return res.json();
     })
@@ -95,7 +99,6 @@ const listAllTweets = () => {
 listAllTweets();
 
 const addNewestTweet = (tweet) => {
-  console.log("tweet.content", tweet.content);
   const div = document.createElement("div");
   div.classList.add("single-tweet");
 

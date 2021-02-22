@@ -32,9 +32,6 @@
   text-align: center;
 }
 
-.loading {
-}
-
 .tweets {
   overflow: scroll;
   height: 80vh;

@@ -71,3 +71,20 @@ app.post("/signup", (req, res, next) => {
     })
     .catch(next);
 });
+
+//login
+app.post("/login", (req, res, next) => {
+  const user = {
+    email: req.body.email.toString(),
+    password: req.body.password.toString(),
+  };
+  users
+    .findOne({ email: user.email })
+    .then((foundUser) => {
+      foundUser.password == user.password
+        ? //send new user info back to client
+          res.json(foundUser)
+        : res.send(404);
+    })
+    .catch(next);
+});
